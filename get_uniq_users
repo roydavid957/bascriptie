@@ -1,0 +1,23 @@
+#!/bin/bash
+# Roy David
+# s2764989
+# bascriptie
+
+# Descr: Linux commands to get the users I used to collect the data(tweets) for every region
+
+#north
+zcat /net/corpora/twitter2/Tweets/2017/08/20170828:*.out.gz | /net/corpora/twitter2/tools/tweet2tab user user.id user.location | grep -w -e "Groningen" -e "Drenthe" -e "Friesland" > "users_north.txt"
+sort users_north.txt | uniq > "uniq_users_north.txt"
+
+#east
+zcat /net/corpora/twitter2/Tweets/2017/08/20170828:*.out.gz | /net/corpora/twitter2/tools/tweet2tab user user.id user.location | grep -w -e "Gelderland" -e "Overijssel" > "users_east.txt"
+sort users_east.txt | uniq > "uniq_users_east.txt"
+
+#west
+zcat /net/corpora/twitter2/Tweets/2017/08/20170828:*.out.gz | /net/corpora/twitter2/tools/tweet2tab user user.id user.location | grep -w -e "Zeeland" -e "Flevoland" -e "Utrecht" -e "Noord-Holland" -e "Zuid-Holland" > "users_west.txt"
+sort users_west.txt | uniq > "uniq_users_west.txt"
+
+
+#south
+zcat /net/corpora/twitter2/Tweets/2017/08/20170828:*.out.gz | /net/corpora/twitter2/tools/tweet2tab user user.id user.location | grep -w -e "Limburg" -e "Noord-Brabant" > "users_south.txt"
+sort users_south.txt | uniq > "uniq_users_south.txt"
