@@ -33,8 +33,10 @@ regions = ["north","east","west","south"]
 news_list = []
 random100_list = []
 
-punctuation_list = ["!","@","$","%","^","&","*","(",")","-","_","=","+","`","~","[","{","]","}","\\","|",";",":","'",'"',",","<",".",">","/","?"] # all punctuation except "#"
+punctuation_list = ["!","(",")","`","~","[","{","]","}","\\","|",";",":","'",'"',",","<",".",">","/","?"] # all punctuation except "#","@","^","$","%","&","*","-","_","=","+"
 
+filt1 = False
+filt2 = True
 for region in regions:
 
 	#print("\n\t",sys.argv[-1])
@@ -74,44 +76,58 @@ for region in regions:
 								lang = langid.classify(tweet['text'])
 
 								if lang[0] == "nl": # check wether language is Dutch
+									
+									if filt1 == True:
+										if "é" in tweet['text'] or "á" in tweet['text'] or "ó" in tweet['text'] or "ú" in tweet['text'] or "í" in tweet['text']: # change é etc to e etc to keep word after encoding
+											for word in tweet['text'].split():
+												for letter in word:
+													if letter == "é":
+														tweet['text'] = tweet['text'].replace(letter,"e")
+													if letter == "á":
+														tweet['text'] = tweet['text'].replace(letter,"a")
+													if letter == "ó":
+														tweet['text'] = tweet['text'].replace(letter,"o")
+													if letter == "ú":
+														tweet['text'] = tweet['text'].replace(letter,"u")
+													if letter == "í":
+														tweet['text'] = tweet['text'].replace(letter,"i")
 
-									if "é" in tweet['text'] or "á" in tweet['text'] or "ó" in tweet['text'] or "ú" in tweet['text'] or "í" in tweet['text']: # change é etc to e etc to keep word after encoding
+										tweet['text'] = tweet['text'].encode('ascii','ignore').decode("utf-8").lower() # filter emoticons like "\ud*" etc
+									
+									if filt2 == True:
+										tweet['text'] = tweet['text'].lower()
+										if "\n" in tweet['text']: # replace every \n in tweet with space
+											for word in tweet['text'].split():
+												tweet['text'] = tweet['text'].replace("\n"," ")
+							
+										if "\r" in tweet['text']: # replace every \r in tweet with space
+											for word in tweet['text'].split():
+												tweet['text'] = tweet['text'].replace("\r"," ")
+
+										if "http" in tweet['text']: # remove url from tweet (by replacing with nothing)
+											for word in tweet['text'].split():
+												if "http" in word:
+													tweet['text'] = tweet['text'].replace(word,"")
+										
 										for word in tweet['text'].split():
-											for letter in word:
-												if letter == "é":
-													tweet['text'] = tweet['text'].replace(letter,"e")
-												if letter == "á":
-													tweet['text'] = tweet['text'].replace(letter,"a")
-												if letter == "ó":
-													tweet['text'] = tweet['text'].replace(letter,"o")
-												if letter == "ú":
-													tweet['text'] = tweet['text'].replace(letter,"u")
-												if letter == "í":
-													tweet['text'] = tweet['text'].replace(letter,"i")
+											for char in word:
+												if char in punctuation_list:
+													tweet['text'] = tweet['text'].replace(char," ")
+									
+									if filt1 == True:
+										if "http" in tweet['text']: # remove url from tweet (by replacing with nothing)
+											for word in tweet['text'].split():
+												if "http" in word:
+													tweet['text'] = tweet['text'].replace(word,"")
 
-									tweet['text'] = tweet['text'].encode('ascii','ignore').decode("utf-8").lower() # filter emoticons like "\ud*" etc
+										if "@" in tweet['text']: # remove "@" from tweet (by replacing with nothing)
+											for word in tweet['text'].split():
+												if "@" in word:
+													tweet['text'] = tweet['text'].replace(word,"")
 
-									if "\n" in tweet['text']: # replace every \n in tweet with space
-										for word in tweet['text'].split():
-											tweet['text'] = tweet['text'].replace("\n"," ")
-						
-									if "\r" in tweet['text']: # replace every \r in tweet with space
-										for word in tweet['text'].split():
-											tweet['text'] = tweet['text'].replace("\r"," ")
-
-									if "http" in tweet['text']: # remove url from tweet (by replacing with nothing)
-										for word in tweet['text'].split():
-											if "http" in word:
-												tweet['text'] = tweet['text'].replace(word,"")
-
-									if "@" in tweet['text']: # remove "@" from tweet (by replacing with nothing)
-										for word in tweet['text'].split():
-											if "@" in word:
-												tweet['text'] = tweet['text'].replace(word,"")
-
-									for item in punctuation_list: # remove all punctuation except "#"
-										if item in tweet['text']:
-											tweet['text'] = tweet['text'].replace(item," ")
+										for item in punctuation_list: # remove all punctuation except "#"
+											if item in tweet['text']:
+												tweet['text'] = tweet['text'].replace(item," ")
 
 									if tweet['text'] != "" and tweet['text'].split() != []:
 										all_tweets.append(tweet)
