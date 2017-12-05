@@ -29,7 +29,7 @@ print("\toutputs f1_score, classification_report, confusion_matrix")
 print("Usage:\tpython test.py")
 print("")
 
-f = open("news.uniq","r").readlines()
+f = open("news.shfltrd","r").readlines() #specifiy file
 
 print("creating X's and Y's, might take some time...")
 print("")
@@ -46,14 +46,14 @@ for line in f:
 	line = ast.literal_eval(line)
 	line = [line]
 	for l in line:
-		d1 = {}
+		d1 = {} #unigrams
 		twograms = []
 		two_grams = []
-		d2 = {}
+		d2 = {} #bigrams
 		trigrams = []
 		tri_grams = []
-		d3 = {}
-		d12 = {}
+		d3 = {} #trigrams
+		d12 = {} #uni+bigrams
 		for k,v in l.items():
 			y_train.append(l[k]["location"])
 			for tweet in l[k]["text"]:
@@ -102,7 +102,12 @@ for classifier in classifiers:
 			print("\t#####\tTRIGRAMS\t#####\n")
 		if x == x12_train:
 			print("\t#####\tUNI+BIGRAMS\t#####\n")
+
 		X_train = vectorizer.fit_transform(x, label_train)
+
+		total_y_tst = []
+		total_predicted_y = []
+		total_X_tst = []
 
 		"""KFOLD"""
 		print("KFold, n=10:")
@@ -114,6 +119,10 @@ for classifier in classifiers:
 			y_trn, y_tst = label_train[train_index], label_train[test_index]
 			classifier.fit(X_trn, y_trn)
 			predicted_y = classifier.predict(X_tst)
+
+			total_y_tst.extend(y_tst)
+			total_predicted_y.extend(predicted_y)
+
 			#print("predicted_y: ",len(predicted_y),"\n",predicted_y)
 			#print("")
 			f1 = f1_score(y_tst, predicted_y, average='micro')
@@ -125,6 +134,8 @@ for classifier in classifiers:
 			#print(confusion_matrix(y_tst, predicted_y, labels=["E", "N", "S", "W"]))
 			#print("")
 		print("\tRESULTS:")
+		print(classifier.classes_)
+		print(confusion_matrix(total_y_tst, total_predicted_y, labels=["E", "N", "S", "W"]))
 		avg_f1_score = f1score / len(f1_list)
 		print("avg f1_score: ",avg_f1_score)
 		print("f1_list: ",len(f1_list),"\n\t",f1_list)
@@ -132,14 +143,6 @@ for classifier in classifiers:
 		"""KFOLD"""
 
 		"""MOST INF FEAT"""
-		#n=10
-		#feature_names = vectorizer.get_feature_names()
-		#print("feature_names")
-		#coefs_with_fns = sorted(zip(classifier.coef_[0], feature_names))
-		#top = zip(coefs_with_fns[:n], coefs_with_fns[:-(n + 1):-1])
-		#for (coef_1, fn_1), (coef_2, fn_2) in top:
-		#	print("\t%.4f\t%-15s\t\t%.4f\t%-15s" % (coef_1, fn_1, coef_2, fn_2))
-		#print("")
 		#if avg_f1_score > top_f1_score:
 		#	top_f1_score = avg_f1_score
 		print("Most informative features:")
