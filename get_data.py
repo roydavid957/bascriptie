@@ -27,11 +27,24 @@ my_authentication = OAuth(cred["ACCESS_TOKEN"], cred["ACCESS_TOKEN_SECRET"], \
 ts = TwitterSearch(access_token=cred["ACCESS_TOKEN"],access_token_secret=cred["ACCESS_TOKEN_SECRET"],
 			   consumer_key=cred["CONSUMER_KEY"], consumer_secret=cred["CONSUMER_SECRET"])
 
-regions = ["north","east","west","south"]
+regions = ["south","west","east","north"]
 news_list = []
 random100_list = []
 translator = str.maketrans('', '', string.punctuation)
 punct = ["…","“","”","‘","’","€"]
+provinces = ["groningen","friesland","drenthe","overijssel","gelderland","flevoland","utrecht","noordholland","zuidholland","zeeland","noordbrabant","limburg"]
+cities = ["delfzijl","veendam",
+"leeuwarden","drachten","sneek","heerenveen",
+"assen","emmen","hoogeveen","meppel",
+"kampen","zwolle","almelo","hengelo","enschede","deventer",
+"zutphen","doetinchem","arnhem","nijmegen","wageningen","apeldoorn",
+"emmeloord","lelystad","almere",
+"amersfoort",
+"hilversum","amstelveen","amsterdam","zaandam","purmerend","haarlem","amstelveen","alkmaar","enkhuizen",
+"leiden","alphenaandenrijn","zoetermeer","gouda","zoetermeer","delft","denhaag","rotterdam","dordrecht",
+"middelburg","vlissingen","terneuzen",
+"bergenopzoom","roosendaal","breda","tilburg","shertogenbosch","denbosch","oss","eindhoven","helmond",
+"venlo","roermond","heerlen","maastricht"]
 
 for region in regions:
 
@@ -90,16 +103,27 @@ for region in regions:
 											tweet['text'] = tweet['text'].replace(p," ")
 									
 									txt = []
-									for word in tweet['text'].split():
+									for word in tweet['text'].split(): #remove 1 letter "words"
 										if len(word) == 1:
 											pass
 										else:
 											txt.append(word)
 									tweet['text'] = " ".join(txt)
 
+									# uncomment to only remove provincenames
+									#for word in tweet['text'].split():
+									#	if word in provinces: #remove provincenames (some overlap with city names)
+									#		tweet['text'] = tweet['text'].replace(word,"")
+									# comment to only remove provincenames
+									for word in tweet['text'].split():
+										for prov in provinces: #remove all words with provincenames in them
+											for c in cities: #remove all words with citynames in them
+												if prov in word or c in word:
+													tweet['text'] = tweet['text'].replace(word,"")
+
 									if tweet['text'] != "" and tweet['text'].split() != []:
 										dup = False
-										for twt in all_tweets: #skip dulpicate tweets
+										for twt in all_tweets: #skip duplicate tweets
 											if tweet['text'] == twt['text']:
 												dup = True
 										if dup == False:
@@ -120,24 +144,30 @@ for region in regions:
 
 
 			except TwitterSearchException as e: # catch errors
-				#print(e,"for checking purpose only, ignore")
+				# uncomment to see error
+				#print(e)
 				pass
 	
 		elif len(region_list) == 250:
 			print("len region_list: ",len(region_list))
+			# uncomment to create file for each region
+			#with open(region,"w") as regionfile:
+			#	for line in region_list:
+			#		regionfile.write(str(line))
+			#		regionfile.write("\n")
 			for line in region_list:
 				news_list.append(line)
-			print("len news: ",len(news_list))
+			#print("len news: ",len(news_list))
 			np.random.seed(1234)
 			random25nrs = []
 			while len(random25nrs) != 25:
 				randomint = np.random.randint(0, 250)
 				if randomint not in random25nrs:
 					random25nrs.append(randomint)
-			print("len random25nrs: ",len(random25nrs))
+			#print("len random25nrs: ",len(random25nrs))
 			for nr in random25nrs:
 				random100_list.append(region_list[nr])
-			print("len random100: ",len(random100_list))
+			#print("len random100: ",len(random100_list))
 			break
 	if len(random100_list) == 100:
 		with open("random100","w") as random100file:
