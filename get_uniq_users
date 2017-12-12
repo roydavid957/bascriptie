@@ -3,7 +3,7 @@
 # s2764989
 # bascriptie
 
-# Descr: Linux commands to get the users I used to collect the data(tweets) for every region
+# Descr: Linux commands to get the users used to collect the data(tweets) for every region
 
 #north
 zcat /net/corpora/twitter2/Tweets/2017/08/20170828:*.out.gz | /net/corpora/twitter2/tools/tweet2tab user user.id user.location | grep -w -e "Groningen" -e "Drenthe" -e "Friesland" > "users_north.txt"
