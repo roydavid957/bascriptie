@@ -2,4 +2,4 @@
 Roy David
 s2764989
 
-Code for bachelor thesis Information Science RuG
+This repository contains the code used for the Bachelor thesis course for Information Science at the University of Groningen (RUG).
