@@ -6,6 +6,9 @@ This repository contains the code used for the Bachelor thesis course for Inform
 
 It contains the following files:
 get_uniq_users: contains the Linux commands in order to get the users used to collect the data with
+After running the Linux commands make sure to put the files gotton from the commands into a directory called:
+data-master
+As you need it to be that way in order to get the data
 
 For the following two python programs you need to have your own Twitter credentials file:
 
