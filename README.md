@@ -5,10 +5,11 @@ s2764989
 This repository contains the code used for the Bachelor thesis course for Information Science at the University of Groningen (RUG).
 
 It contains the following files:
-get_uniq_users: contains the Linux commands in order to get the users used to collect the data with
+get_uniq_users: contains the Linux commands in order to get the users used to collect the data with. 
 After running the Linux commands make sure to put the files gotton from the commands into a directory called:
 data-master
-As you need it to be that way in order to get the data
+data-master: should at least include: uniq_users_north.txt, uniq_users_east.txt, uniq_users_west.txt, uniq_users_south.txt
+This is needed because get_data_prov.py and get_data_city.py both call "data-master/uniq_users_(region).txt" (region: either: north, south, east, west).
 
 For the following two python programs you need to have your own Twitter credentials file:
 
